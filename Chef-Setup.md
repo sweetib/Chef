@@ -107,9 +107,9 @@ Following this, you should have two `.pem` key files in your home directory. In 
 
 #### Configure GUI for Chef server
 ```
- chef-server-ctl install chef-manage 
- chef-server-ctl reconfigure
- chef-manage-ctl reconfigure
+chef-server-ctl install chef-manage 
+chef-server-ctl reconfigure
+chef-manage-ctl reconfigure
 ```
 
 We will need to connect to this server and download these keys to our workstation momentarily. For now though, our Chef server installation is complete.
@@ -125,25 +125,25 @@ Now that our Chef server is up and running, our next course of action is to conf
 
 First, we need to install git through the apt packaging tools. Update your packaging index and install the tool by typing:
 ```
- apt-get update
- apt-get install git
+apt-get update
+apt-get install git
 ```
 Once you have git installed, you can clone the Chef repository onto your machine. For this guide, we will simply clone it to our home directory:
 ```
- cd ~
- git clone https://github.com/chef/chef-repo.git
+cd ~
+git clone https://github.com/chef/chef-repo.git
 ```
  
 #### Download and Install the Chef Development Kit
 The tool we are interested in at this point is the bundled knife command, which can communicate with and control both the Chef server and any Chef clients.
 ```
- cd ~
- wget https://packages.chef.io/stable/ubuntu/12.04/chefdk_0.14.25-1_amd64.deb
+cd ~
+wget https://packages.chef.io/stable/ubuntu/12.04/chefdk_0.14.25-1_amd64.deb
 ```
 
 Once the `.deb` package has been downloaded, you can install it by typing:
 ```
- dpkg -i chefdk_0.14.25-1_amd64.deb 
+dpkg -i chefdk_0.14.25-1_amd64.deb 
 ```
  
 After the installation, you can verify that all of the components are available in their expected location through the new chef command:
@@ -175,28 +175,28 @@ ssh -A ccadmin@192.168.0.121
 
 Configuring Knife to Manage your Chef Environment
 ```
- vim chef-repo/.chef/knife.rb
+vim chef-repo/.chef/knife.rb
 ```
  file should have following content:
 ``` 
-      current_dir = File.dirname(__FILE__)
-      log_level :info
-      log_location STDOUT
-      node_name "ccadmin"
-      client_key "#{current_dir}/ccadmin.pem"
-      validation_client_name "cldcvr-validator"
-      validation_key "#{current_dir}/cldcvr-validator.pem"
-      chef_server_url "https://192.168.0.121/organizations/cldcvr"
-      syntax_check_cache_path "#{ENV['HOME']}/.chef/syntaxcache"
-      cookbook_path ["#{current_dir}/../cookbooks"]
+current_dir = File.dirname(__FILE__)
+log_level :info
+log_location STDOUT
+node_name "ccadmin"
+client_key "#{current_dir}/ccadmin.pem"
+validation_client_name "cldcvr-validator"
+validation_key "#{current_dir}/cldcvr-validator.pem"
+chef_server_url "https://192.168.0.121/organizations/cldcvr"
+syntax_check_cache_path "#{ENV['HOME']}/.chef/syntaxcache"
+cookbook_path ["#{current_dir}/../cookbooks"]
 ```
 
 When you are finished, save and close the knife.rb file.
 Now, we will test the configuration file by trying out a simple knife command. We need to be in our 
 ```
 ~/chef-repo directory for our configuration file to be read correctly:
- cd ~/chef-repo
- knife client list
+cd ~/chef-repo
+knife client list
 ```
  
 This first attempt should fail with an error that looks like this:
@@ -212,12 +212,12 @@ If your Chef Server uses a self-signed certificate, you can use
 
 Solve error by following command:
 ```
- knife ssl check
- mkdir ~/chef-repo/.chef/trusted_certs
- cp /var/opt/opscode/nginx/ca/192.168.0.121.crt ~/chef-repo/.chef/trusted_certs/.
- knife ssl check
- knife client list
- cldcvr-validator
+knife ssl check
+mkdir ~/chef-repo/.chef/trusted_certs
+cp /var/opt/opscode/nginx/ca/192.168.0.121.crt ~/chef-repo/.chef/trusted_certs/.
+knife ssl check
+knife client list
+cldcvr-validator
 ```
 
 Setup Knife EC2 on workstation
